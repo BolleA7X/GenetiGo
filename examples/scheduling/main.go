@@ -77,10 +77,6 @@ func (s *schedule) SetSurvivalChance(chance float32) {
 	s.SurvivalChance = chance
 }
 
-func (s *schedule) IsSolution() bool {
-	return false
-}
-
 func (s *schedule) ComputeAndSetFitnessScore() {
 	var tardiness = computeTardiness(s.sequence)
 	// Reward low tardiness
