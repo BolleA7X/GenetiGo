@@ -49,6 +49,17 @@ scheduling.
 
 ## GENETIC OPERATORS
 
+### FITNESS
+
+The fitness score of the i-eth job $f_i$ is computed such that a low tardiness
+is rewarded:
+
+$$
+f_i = T_{MAX}^2 - T^2 = (T_{MAX} + T)(T_{MAX} - T)
+$$
+
+where $T_{MAX}$ is the maximum tardiness allowed.
+
 ### CROSSOVER
 
 The crossover between two members simply consists in inheriting the sequence of
