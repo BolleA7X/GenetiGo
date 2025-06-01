@@ -48,3 +48,62 @@ change.
     3. Crossover each couple of parents to create a child
     4. Possibly, mutate the child
     5. Group all children to create the population of the next generation
+
+## USAGE
+
+### PREREQUISITES
+
+This framework requires Go version 1.22 or above. Tested on Go version 1.23.4.
+
+### DEFINING THE PROBLEM
+
+First, import the ```ga``` package of this module, which provides the genetic
+algorithm generic implementation.
+
+```
+import "github.com/BolleA7X/GenetiGo/ga"
+```
+
+Then:
+
+1. Define a struct to represent an individual/member. You can embed the provided
+```ga.MemberData``` type to your struct to make sure it has the correct
+attributes, or define them by yourself
+2. Make your struct implement the ```ga.Member``` interface so that the solver
+knows how crossover and mutation work for your specific problem
+3. Randomly create a list of individuals to use as the population of the first
+generation
+4. Create an instance of ```ga.Solver``` by calling the ```ga.NewSolver```
+function, passing the first generation and some options as arguments
+5. Call the ```Solve``` method of your ```ga.Solver``` instance. This method
+returns the individual with the highest fitness at the last generation
+
+The ```ga.NewSolver``` function expects an object of type ```ga.SolverOptions```
+as its second argument, allowing you to customize the parameters and behaviour
+of the Genetic Algorithm. These options are:
+
+- **PopulationSize**: Number of members at each generation
+- **MaxGenerations**: Maximum number of generations to simulate
+- **MutationChance**: Chance that a member of the population randomly mutates
+(0 <= chance <= 1)
+- **NBatches**: Number of batches. Population is divided into batches, where each
+batch is managed by a separate goroutine. If <= 1, the solver works in single-threaded
+mode. The number of goroutines is limited to the population size.
+- **Verbose**: Enable verbose output on stdout
+
+### EXAMPLES
+
+Some examples are provided in the ```examples``` folder. Each example has its
+own folder and main function.
+
+To execute an example, run the following command:
+
+```
+go run examples/<example_name>/main.go
+```
+
+You can also check for race conditions while running the program:
+
+```
+go run -race examples/<example_name>/main.go
+```
