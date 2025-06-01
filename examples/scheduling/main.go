@@ -8,7 +8,7 @@ import (
 	"github.com/BolleA7X/GenetiGo/ga"
 )
 
-const NTASKS uint32 = 15
+const NJOBS uint32 = 15
 const MAXTARDINESS uint32 = 1000
 
 type job struct {
@@ -19,10 +19,10 @@ type job struct {
 
 type schedule struct {
 	ga.MemberData
-	sequence [NTASKS]uint32
+	sequence [NJOBS]uint32
 }
 
-var JOBS = [NTASKS]job{
+var JOBS = [NJOBS]job{
 	{0, 4, 10},
 	{1, 3, 8},
 	{2, 2, 7},
@@ -40,7 +40,7 @@ var JOBS = [NTASKS]job{
 	{14, 4, 19},
 }
 
-func computeTardiness(sequence [NTASKS]uint32) uint32 {
+func computeTardiness(sequence [NJOBS]uint32) uint32 {
 	var tardiness uint32 = 0
 	var startTime uint32 = 0
 	for _, jobId := range sequence {
@@ -59,8 +59,8 @@ func computeTardiness(sequence [NTASKS]uint32) uint32 {
 }
 
 func (s *schedule) randomSequence() {
-	var permutation = rand.Perm(int(NTASKS))
-	for i := range NTASKS {
+	var permutation = rand.Perm(int(NJOBS))
+	for i := range NJOBS {
 		s.sequence[i] = uint32(permutation[i])
 	}
 }
