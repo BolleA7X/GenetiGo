@@ -40,7 +40,7 @@ var JOBS = [NJOBS]job{
 	{14, 4, 19},
 }
 
-func computeTardiness(sequence [NJOBS]uint32) uint32 {
+func computeTardinessFromSequence(sequence [NJOBS]uint32) uint32 {
 	var tardiness uint32 = 0
 	var startTime uint32 = 0
 	for _, jobId := range sequence {
@@ -56,6 +56,16 @@ func computeTardiness(sequence [NJOBS]uint32) uint32 {
 	}
 
 	return tardiness
+}
+
+func computeFitnessFromTardiness(tardiness uint32) uint32 {
+	// Reward low tardiness
+	return (MAXTARDINESS + tardiness) * (MAXTARDINESS - tardiness)
+}
+
+func computeTardinessFromFitness(fitness uint32) uint32 {
+	// Inverse of computeFitnessFromTardiness
+	return uint32(math.Sqrt(float64(MAXTARDINESS*MAXTARDINESS - fitness)))
 }
 
 func (s *schedule) randomSequence() {
@@ -78,9 +88,8 @@ func (s *schedule) SetSurvivalChance(chance float32) {
 }
 
 func (s *schedule) ComputeAndSetFitnessScore() {
-	var tardiness = computeTardiness(s.sequence)
-	// Reward low tardiness
-	s.FitnessScore = (MAXTARDINESS + tardiness) * (MAXTARDINESS - tardiness)
+	var tardiness = computeTardinessFromSequence(s.sequence)
+	s.FitnessScore = computeFitnessFromTardiness(tardiness)
 }
 
 func (s *schedule) Crossover(other ga.Member) ga.Member {
@@ -126,7 +135,7 @@ func main() {
 
 	var solver = ga.NewSolver(initialPopulation, params)
 	var result = solver.Solve()
-	var bestTardiness = uint32(math.Sqrt(float64(MAXTARDINESS*MAXTARDINESS - result.GetFitnessScore())))
+	var bestTardiness = computeTardinessFromFitness(result.FitnessScore)
 	fmt.Println("Best sequence: ", result.sequence)
 	fmt.Println("Best tardiness: ", bestTardiness)
 }
