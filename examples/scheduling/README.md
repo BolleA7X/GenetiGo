@@ -47,7 +47,9 @@ by the end time of the previously executed task plus 1.
 A tentative solution is a temporal sequence of jobs, representing the proposed
 scheduling.
 
-## GENETIC OPERATORS
+### DISTANCE
+
+The distance between two members is not implemented because speciation is disabled.
 
 ### FITNESS
 

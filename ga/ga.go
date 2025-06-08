@@ -18,6 +18,7 @@ type Member interface {
 	GetFitnessScore() uint32          // Getter of the FitnessScore attribute
 	GetSurvivalChance() float32       // Getter of the SurvivalChance attribute
 	SetSurvivalChance(chance float32) // Setter of the SurvivalChance attribute
+	Distance(other Member) float64    // Defines how the distance between two Members is computed
 	ComputeAndSetFitnessScore()       // Defines how the fitness score is computed for this Member
 	Crossover(other Member) Member    // Defines how the crossover operator works for this Member
 	Mutate()                          // Defines how the mutation operator works for this Member
@@ -38,6 +39,7 @@ type SolverOptions struct {
 	MaxGenerations uint32  // Maximum number of generations to simulate
 	MutationChance float32 // Chance that a member of the population randomly mutates
 	NBatches       uint32  // Population is divided into batches, each batch managed by a separate goroutine
+	Speciation     bool    // Enables speciation (usually disabled, tipically used in NEAT)
 	Verbose        bool    // Enable verbose output on stdout
 }
 
@@ -133,6 +135,22 @@ func (solver *Solver[M]) Solve() M {
 
 	for {
 		var wg sync.WaitGroup
+
+		// If speciation is enabled, compute the distances between each couple of members (parallelized)
+
+		if solver.options.Speciation {
+			for _, batch := range batches {
+				wg.Add(1)
+				go func(b batching.BatchInfo) {
+					defer wg.Done()
+					for i := b.Start; i < b.End; i++ {
+						for j := range solver.population {
+							solver.population[i].Distance(solver.population[j])
+						}
+					}
+				}(batch)
+			}
+		}
 
 		// Compute the fitness score of each individual (parallelized)
 

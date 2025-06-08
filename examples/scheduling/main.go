@@ -109,6 +109,10 @@ func (s *schedule) Mutate() {
 	s.randomSequence()
 }
 
+func (s *schedule) Distance(other ga.Member) float64 {
+	return 0
+}
+
 func main() {
 	// Set solver options
 
@@ -117,6 +121,7 @@ func main() {
 		MaxGenerations: 300,
 		MutationChance: 0.05,
 		NBatches:       10,
+		Speciation:     false,
 		Verbose:        true,
 	}
 
